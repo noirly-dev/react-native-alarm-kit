@@ -1,0 +1,16 @@
+node_modules/
+lib/
+.DS_Store
+*.log
+.tmp-example-scaffold/
+example/android/
+example/ios/
+example/node_modules/
+.idea/
+*.iml
+local.properties
+.cxx/
+build/
+Pods/
+*.xcworkspace
+*.xcuserdata

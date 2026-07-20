@@ -1,0 +1,22 @@
+jest.mock('./src/NativeAlarmKit', () => ({
+  __esModule: true,
+  default: {
+    scheduleAlarm: jest.fn(),
+    updateAlarm: jest.fn(),
+    cancelAlarm: jest.fn(),
+    cancelAllAlarms: jest.fn(),
+    getAlarm: jest.fn(),
+    getAllAlarms: jest.fn(),
+    snoozeAlarm: jest.fn(),
+    dismissAlarm: jest.fn(),
+    checkPermissions: jest.fn(),
+    requestPermissions: jest.fn(),
+    getCapabilities: jest.fn(),
+    onAlarmFired: jest.fn(() => ({remove: jest.fn()})),
+    onAlarmMissedThenFired: jest.fn(() => ({remove: jest.fn()})),
+    onAlarmsReconciled: jest.fn(() => ({remove: jest.fn()})),
+    onSnoozed: jest.fn(() => ({remove: jest.fn()})),
+    onDismissed: jest.fn(() => ({remove: jest.fn()})),
+    onPermissionsChanged: jest.fn(() => ({remove: jest.fn()})),
+  },
+}));
