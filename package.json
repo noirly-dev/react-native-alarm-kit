@@ -1,6 +1,6 @@
 {
   "name": "@noirly-dev/react-native-alarm-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local-only native scheduling engine for alarms, tasks, and reminders in React Native",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",

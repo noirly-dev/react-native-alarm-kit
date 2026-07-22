@@ -59,9 +59,9 @@ Alternatively, replace `${GITHUB_TOKEN}` with the token directly in `.npmrc` for
 ### 3. Install the package
 
 ```bash
-npm install @noirly-dev/react-native-alarm-kit@0.1.0
+npm install @noirly-dev/react-native-alarm-kit@0.1.1
 # or
-yarn add @noirly-dev/react-native-alarm-kit@0.1.0
+yarn add @noirly-dev/react-native-alarm-kit@0.1.1
 ```
 
 Autolinking handles native setup on both platforms. Run `pod install` in your iOS project after installing.
