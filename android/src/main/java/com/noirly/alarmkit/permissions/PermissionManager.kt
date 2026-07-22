@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.PermissionAwareActivity
 import com.noirly.alarmkit.AlarmKitException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -31,31 +32,22 @@ class PermissionManager(private val context: ReactApplicationContext) {
         Manifest.permission.POST_NOTIFICATIONS,
       ) == PackageManager.PERMISSION_GRANTED
       if (!granted) {
-        val activity = context.currentActivity
+        val activity = context.currentActivity as? PermissionAwareActivity
           ?: throw AlarmKitException.PermissionDenied("No active activity for permission request")
-        val result = kotlinx.coroutines.suspendCancellableCoroutine<Boolean> { continuation ->
-          val listener = object : com.facebook.react.modules.core.PermissionListener {
-            override fun onRequestPermissionsResult(
-              requestCode: Int,
-              permissions: Array<out String>,
-              grantResults: IntArray,
-            ): Boolean {
-              if (requestCode == REQUEST_NOTIFICATIONS) {
-                context.removePermissionListener(this)
-                val allowed = grantResults.isNotEmpty() &&
-                  grantResults[0] == PackageManager.PERMISSION_GRANTED
-                continuation.resume(allowed) {}
-                return true
-              }
-              return false
-            }
-          }
-          context.addPermissionListener(listener)
-          continuation.invokeOnCancellation { context.removePermissionListener(listener) }
+        val result = suspendCancellableCoroutine<Boolean> { continuation ->
           activity.requestPermissions(
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
             REQUEST_NOTIFICATIONS,
-          )
+          ) { requestCode, _, grantResults ->
+            if (requestCode == REQUEST_NOTIFICATIONS) {
+              val allowed = grantResults.isNotEmpty() &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED
+              continuation.resume(allowed) {}
+              true
+            } else {
+              false
+            }
+          }
         }
         if (!result) {
           throw AlarmKitException.PermissionDenied("Notification permission denied")

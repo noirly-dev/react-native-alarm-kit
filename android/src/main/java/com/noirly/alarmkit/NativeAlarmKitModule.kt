@@ -231,6 +231,32 @@ class NativeAlarmKitModule(
     promise.reject(error.code, error.message, userInfo)
   }
 
+  internal fun publishAlarmFired(record: AlarmRecord) {
+    emitOnAlarmFired(AlarmMapper.toWritableMap(record))
+  }
+
+  internal fun publishAlarmMissedThenFired(record: AlarmRecord) {
+    emitOnAlarmMissedThenFired(AlarmMapper.toWritableMap(record))
+  }
+
+  internal fun publishAlarmsReconciled(records: List<AlarmRecord>) {
+    val array = Arguments.createArray()
+    records.forEach { array.pushMap(AlarmMapper.toWritableMap(it)) }
+    emitOnAlarmsReconciled(array)
+  }
+
+  internal fun publishSnoozed(record: AlarmRecord) {
+    emitOnSnoozed(AlarmMapper.toWritableMap(record))
+  }
+
+  internal fun publishDismissed(record: AlarmRecord) {
+    emitOnDismissed(AlarmMapper.toWritableMap(record))
+  }
+
+  internal fun publishPermissionsChanged(context: ReactApplicationContext) {
+    emitOnPermissionsChanged(PermissionManager(context).checkPermissionsMap())
+  }
+
   companion object {
     const val NAME = "NativeAlarmKit"
   }

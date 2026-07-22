@@ -1,115 +1,19 @@
-/**
- * Canonical alarm state as persisted and returned by native.
- */
-export type AlarmState =
-  | 'scheduled'
-  | 'ringing'
-  | 'snoozed'
-  | 'dismissed'
-  | 'missed_fired';
+import type {AlarmHandle, PermissionStatus} from './NativeAlarmKit';
 
-/**
- * Recurrence frequency discriminant.
- */
-export type RecurrenceFrequency = 'none' | 'daily' | 'weekly' | 'custom';
-
-/**
- * Discriminated flat recurrence rule (Codegen-safe).
- */
-export interface RecurrenceRule {
-  frequency: RecurrenceFrequency;
-  daysOfWeek?: number[] | null;
-  intervalDays?: number | null;
-}
-
-/**
- * Default snooze behavior for an alarm.
- */
-export interface SnoozeConfig {
-  defaultMinutes: number;
-  maxSnoozeCount: number;
-}
-
-/**
- * Input config for scheduling a new alarm.
- */
-export interface AlarmConfig {
-  triggerAtMillis: number;
-  recurrenceRule?: RecurrenceRule | null;
-  title: string;
-  payload?: string | null;
-  soundRef?: string | null;
-  snoozeConfig?: SnoozeConfig | null;
-}
-
-/**
- * Partial config for updating an existing alarm.
- */
-export interface AlarmUpdateConfig {
-  triggerAtMillis?: number;
-  recurrenceRule?: RecurrenceRule | null;
-  title?: string;
-  payload?: string | null;
-  soundRef?: string | null;
-  snoozeConfig?: SnoozeConfig | null;
-}
-
-/**
- * Canonical representation of a scheduled alarm.
- */
-export interface AlarmHandle {
-  id: string;
-  triggerAtMillis: number;
-  recurrenceRule?: RecurrenceRule | null;
-  title: string;
-  payload?: string | null;
-  soundRef?: string | null;
-  snoozeConfig?: SnoozeConfig | null;
-  state: AlarmState;
-  createdAtMillis: number;
-  updatedAtMillis: number;
-}
-
-/**
- * Notification permission status.
- */
-export type NotificationPermissionStatus =
-  | 'granted'
-  | 'denied'
-  | 'notDetermined'
-  | 'provisional';
-
-/**
- * Exact-alarm permission status (Android 12+).
- */
-export type ExactAlarmPermissionStatus = 'granted' | 'denied' | 'notApplicable';
-
-/**
- * Critical-alert permission status (iOS entitlement).
- */
-export type CriticalAlertPermissionStatus =
-  | 'granted'
-  | 'denied'
-  | 'notApplicable';
-
-/**
- * Combined permission status across platforms.
- */
-export interface PermissionStatus {
-  notificationStatus: NotificationPermissionStatus;
-  exactAlarmStatus: ExactAlarmPermissionStatus;
-  criticalAlertStatus: CriticalAlertPermissionStatus;
-}
-
-/**
- * Platform capability introspection result.
- */
-export interface PlatformCapabilities {
-  supportsExactAlarms: boolean;
-  supportsCriticalAlerts: boolean;
-  supportsFullScreenRinging: boolean;
-  maxPendingAlarms?: number | null;
-}
+export type {
+  AlarmConfig,
+  AlarmHandle,
+  AlarmState,
+  AlarmUpdateConfig,
+  CriticalAlertPermissionStatus,
+  ExactAlarmPermissionStatus,
+  NotificationPermissionStatus,
+  PermissionStatus,
+  PlatformCapabilities,
+  RecurrenceFrequency,
+  RecurrenceRule,
+  SnoozeConfig,
+} from './NativeAlarmKit';
 
 /**
  * Versioned error code taxonomy for programmatic error handling.

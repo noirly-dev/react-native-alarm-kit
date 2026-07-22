@@ -1,17 +1,13 @@
 package com.noirly.alarmkit.events
 
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.WritableArray
-import com.noirly.alarmkit.NativeAlarmKitSpec
-import com.noirly.alarmkit.permissions.PermissionManager
-import com.noirly.alarmkit.repository.AlarmMapper
+import com.noirly.alarmkit.NativeAlarmKitModule
 import com.noirly.alarmkit.repository.AlarmRecord
 
 class AlarmEventEmitter(
-  private var module: NativeAlarmKitSpec?,
+  private var module: NativeAlarmKitModule?,
 ) {
-  fun attach(module: NativeAlarmKitSpec) {
+  fun attach(module: NativeAlarmKitModule) {
     this.module = module
   }
 
@@ -20,30 +16,26 @@ class AlarmEventEmitter(
   }
 
   fun emitAlarmFired(record: AlarmRecord) {
-    module?.emitOnAlarmFired(AlarmMapper.toWritableMap(record))
+    module?.publishAlarmFired(record)
   }
 
   fun emitAlarmMissedThenFired(record: AlarmRecord) {
-    module?.emitOnAlarmMissedThenFired(AlarmMapper.toWritableMap(record))
+    module?.publishAlarmMissedThenFired(record)
   }
 
   fun emitAlarmsReconciled(records: List<AlarmRecord>) {
-    val array: WritableArray = Arguments.createArray()
-    records.forEach { array.pushMap(AlarmMapper.toWritableMap(it)) }
-    module?.emitOnAlarmsReconciled(array)
+    module?.publishAlarmsReconciled(records)
   }
 
   fun emitSnoozed(record: AlarmRecord) {
-    module?.emitOnSnoozed(AlarmMapper.toWritableMap(record))
+    module?.publishSnoozed(record)
   }
 
   fun emitDismissed(record: AlarmRecord) {
-    module?.emitOnDismissed(AlarmMapper.toWritableMap(record))
+    module?.publishDismissed(record)
   }
 
   fun emitPermissionsChanged(context: ReactApplicationContext) {
-    val moduleRef = module ?: return
-    val status = PermissionManager(context).checkPermissionsMap()
-    moduleRef.emitOnPermissionsChanged(status)
+    module?.publishPermissionsChanged(context)
   }
 }

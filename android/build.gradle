@@ -1,23 +1,52 @@
-buildscript {
-  ext.kotlin_version = '1.9.24'
-}
-
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-
 def safeExtGet(prop, fallback) {
   rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
+def kotlin_version = safeExtGet('kotlinVersion', '2.1.20')
+
+def isNewArchitectureEnabled() {
+  return project.hasProperty('newArchEnabled') && project.newArchEnabled == 'true'
+}
+
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.google.devtools.ksp:symbol-processing-gradle-plugin:2.1.20-1.0.31'
+  }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.google.devtools.ksp'
+
+if (isNewArchitectureEnabled()) {
+  apply plugin: 'com.facebook.react'
+}
+
+if (isNewArchitectureEnabled()) {
+  react {
+    jsRootDir = file('../src/')
+    libraryName = 'NativeAlarmKitSpec'
+    codegenJavaPackageName = 'com.noirly.alarmkit'
+  }
+}
+
 android {
-  namespace "com.noirly.alarmkit"
+  namespace 'com.noirly.alarmkit'
   compileSdkVersion safeExtGet('compileSdkVersion', 35)
 
   defaultConfig {
     minSdkVersion safeExtGet('minSdkVersion', 24)
     targetSdkVersion safeExtGet('targetSdkVersion', 35)
-    consumerProguardFiles "consumer-rules.pro"
+    consumerProguardFiles 'consumer-rules.pro'
+    buildConfigField 'boolean', 'IS_NEW_ARCHITECTURE_ENABLED', isNewArchitectureEnabled().toString()
+  }
+
+  buildFeatures {
+    buildConfig true
   }
 
   buildTypes {
@@ -38,6 +67,9 @@ android {
   sourceSets {
     main {
       manifest.srcFile 'src/main/AndroidManifest.xml'
+      if (isNewArchitectureEnabled()) {
+        java.srcDirs += ["${project.buildDir}/generated/source/codegen/java"]
+      }
     }
   }
 }
@@ -48,14 +80,14 @@ repositories {
 }
 
 dependencies {
-  implementation "com.facebook.react:react-android"
+  implementation 'com.facebook.react:react-android'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
-  implementation "androidx.room:room-runtime:2.6.1"
-  implementation "androidx.room:room-ktx:2.6.1"
-  kapt "androidx.room:room-compiler:2.6.1"
-  implementation "androidx.core:core-ktx:1.15.0"
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+  implementation 'androidx.room:room-runtime:2.7.1'
+  implementation 'androidx.room:room-ktx:2.7.1'
+  ksp 'androidx.room:room-compiler:2.7.1'
+  implementation 'androidx.core:core-ktx:1.15.0'
 
-  testImplementation "junit:junit:4.13.2"
-  testImplementation "androidx.test:core:1.6.1"
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'androidx.test:core:1.6.1'
 }
