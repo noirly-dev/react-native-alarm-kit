@@ -20,7 +20,7 @@ jobs:
           node-version: 20
           cache: yarn
           registry-url: https://npm.pkg.github.com
-          scope: '@noirly-forge'
+          scope: '@noirly-dev'
       - run: yarn install --frozen-lockfile
       - run: yarn prepare
       - run: npm publish

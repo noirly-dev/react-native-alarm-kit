@@ -1,6 +1,6 @@
 module.exports = {
   dependencies: {
-    '@noirly-forge/react-native-alarm-kit': {
+    '@noirly-dev/react-native-alarm-kit': {
       root: __dirname,
     },
   },

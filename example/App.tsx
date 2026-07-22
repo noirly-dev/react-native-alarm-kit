@@ -14,7 +14,7 @@ import {
   type AlarmHandle,
   type PermissionStatus,
   type PlatformCapabilities,
-} from '@noirly-forge/react-native-alarm-kit';
+} from '@noirly-dev/react-native-alarm-kit';
 
 export default function App() {
   const [alarms, setAlarms] = useState<AlarmHandle[]>([]);

@@ -10,7 +10,7 @@ const config = {
   watchFolders: [root],
   resolver: {
     extraNodeModules: {
-      '@noirly-forge/react-native-alarm-kit': path.join(root, 'src'),
+      '@noirly-dev/react-native-alarm-kit': path.join(root, 'src'),
     },
   },
 };

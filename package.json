@@ -1,5 +1,5 @@
 {
-  "name": "@noirly-forge/react-native-alarm-kit",
+  "name": "@noirly-dev/react-native-alarm-kit",
   "version": "0.1.0",
   "description": "Local-only native scheduling engine for alarms, tasks, and reminders in React Native",
   "main": "lib/commonjs/index.js",
@@ -35,14 +35,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/noirly-forge/react-native-alarm-kit.git"
+    "url": "https://github.com/noirly-dev/react-native-alarm-kit.git"
   },
   "author": "Noirly",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/noirly-forge/react-native-alarm-kit/issues"
+    "url": "https://github.com/noirly-dev/react-native-alarm-kit/issues"
   },
-  "homepage": "https://github.com/noirly-forge/react-native-alarm-kit#readme",
+  "homepage": "https://github.com/noirly-dev/react-native-alarm-kit#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },

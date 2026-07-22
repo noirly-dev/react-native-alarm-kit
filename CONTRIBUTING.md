@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `@noirly-forge/react-native-alarm-kit`.
+Thanks for helping improve `@noirly-dev/react-native-alarm-kit`.
 
 ## Local development
 

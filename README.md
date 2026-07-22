@@ -1,8 +1,8 @@
-# @noirly-forge/react-native-alarm-kit
+# @noirly-dev/react-native-alarm-kit
 
 Local-only native scheduling engine for alarms, tasks, and reminders in React Native apps.
 
-[![CI](https://github.com/noirly-forge/react-native-alarm-kit/actions/workflows/lint-and-typecheck.yml/badge.svg)](https://github.com/noirly-forge/react-native-alarm-kit/actions)
+[![CI](https://github.com/noirly-dev/react-native-alarm-kit/actions/workflows/lint-and-typecheck.yml/badge.svg)](https://github.com/noirly-dev/react-native-alarm-kit/actions)
 
 ## Why this library
 
@@ -12,36 +12,67 @@ Headless scheduling layer — no UI components, no cloud sync, no remote push. T
 
 **Out of scope:** alarm UI, ringtone asset management, cloud sync, remote push.
 
+## Requirements
+
+- React Native CLI (no Expo)
+- New Architecture enabled
+- React Native 0.76+
+
+| Library | React Native | Android min | iOS min |
+|---------|--------------|-------------|---------|
+| 0.1.x   | 0.76+        | 24          | 15.1    |
+
+Pre-1.0 releases (`0.x`) may include breaking changes in minor versions.
+
 ## Installation
 
-This package is published to [GitHub Packages](https://github.com/noirly-forge/react-native-alarm-kit/packages), not npmjs.com.
+This package is published to [GitHub Packages](https://github.com/noirly-dev/react-native-alarm-kit/packages) under the `@noirly-dev` scope — not npmjs.com.
 
-Create or update `.npmrc` in your app:
+### 1. Create a GitHub personal access token
+
+1. Go to [GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens).
+2. Generate a **classic** token (or a fine-grained token with package read access).
+3. Enable **`read:packages`**. If the repository is private, also enable **`repo`**.
+4. Copy the token — you will not be able to see it again.
+
+### 2. Configure npm for GitHub Packages
+
+Create or update `.npmrc` in your app root:
 
 ```ini
-@noirly-forge:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+@noirly-dev:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
-Use a GitHub personal access token with `read:packages` scope. For private repos, the token also needs `repo`.
+Then set the token in your shell before installing:
 
 ```bash
-npm install @noirly-forge/react-native-alarm-kit
+# macOS / Linux
+export GITHUB_TOKEN=ghp_your_token_here
+
+# Windows PowerShell
+$env:GITHUB_TOKEN = "ghp_your_token_here"
+```
+
+Alternatively, replace `${GITHUB_TOKEN}` with the token directly in `.npmrc` for local use only — **do not commit a raw token**.
+
+### 3. Install the package
+
+```bash
+npm install @noirly-dev/react-native-alarm-kit@0.1.0
 # or
-yarn add @noirly-forge/react-native-alarm-kit
+yarn add @noirly-dev/react-native-alarm-kit@0.1.0
 ```
 
 Autolinking handles native setup on both platforms. Run `pod install` in your iOS project after installing.
 
-**Requirements:** React Native CLI (no Expo), New Architecture enabled, React Native 0.76+.
-
 ## Required native setup
 
-The library autolinks receivers/services, but consumers must declare permission intent:
+The library autolinks receivers and services, but consumers must declare permission intent.
 
-### Android (`AndroidManifest.xml` in your app)
+### Android
 
-Permissions are merged from the library manifest. On Android 12+, users must grant exact-alarm permission via system settings (the library guides this through `requestPermissions()`).
+Permissions are merged from the library manifest. On Android 12+, users must grant exact-alarm permission via system settings. The library guides this through `requestPermissions()`.
 
 ### iOS (`Info.plist`)
 
@@ -52,18 +83,10 @@ Permissions are merged from the library manifest. On Android 12+, users must gra
 
 For critical alerts, apply for the Apple entitlement separately and configure your provisioning profile.
 
-## Compatibility
-
-| Library | React Native | Android min | iOS min |
-|---------|--------------|-------------|---------|
-| 0.1.x   | 0.76+        | 24          | 15.1    |
-
-Pre-1.0 releases (`0.x`) may include breaking changes in minor versions.
-
 ## Quick start
 
 ```typescript
-import {AlarmKit, isAlarmKitError} from '@noirly-forge/react-native-alarm-kit';
+import {AlarmKit, isAlarmKitError} from '@noirly-dev/react-native-alarm-kit';
 
 await AlarmKit.requestPermissions();
 
@@ -87,15 +110,15 @@ See the [example app](./example/App.tsx) for a full working demo.
 
 ## API reference
 
-Public exports live in `src/index.ts`. Generated TypeDoc docs are published from CI (see `docs/`).
+Public exports live in `src/index.ts`.
 
-Core groups:
-
-- **Scheduling:** `scheduleAlarm`, `updateAlarm`, `cancelAlarm`, `cancelAllAlarms`, `getAlarm`, `getAllAlarms`
-- **Ringing control:** `snoozeAlarm`, `dismissAlarm`
-- **Permissions:** `checkPermissions`, `requestPermissions`
-- **Capabilities:** `getCapabilities`
-- **Events:** `AlarmKit.addListener(eventName, callback)`
+| Group | Methods |
+|-------|---------|
+| Scheduling | `scheduleAlarm`, `updateAlarm`, `cancelAlarm`, `cancelAllAlarms`, `getAlarm`, `getAllAlarms` |
+| Ringing control | `snoozeAlarm`, `dismissAlarm` |
+| Permissions | `checkPermissions`, `requestPermissions` |
+| Capabilities | `getCapabilities` |
+| Events | `AlarmKit.addListener(eventName, callback)` |
 
 ## Core concepts
 
@@ -125,6 +148,17 @@ All failures reject with typed codes (`E_ALARMKIT_*`). Use `isAlarmKitError()` a
 | Pending cap | Soft practical limits | Hard 64-notification cap |
 | Missed alarms | Catch-up fire on boot | Reconciliation on app active |
 | Critical alerts | Not supported | Entitlement-gated |
+
+## Local development
+
+```bash
+yarn install
+yarn bootstrap:example
+yarn example start
+yarn example android   # or ios
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full workflow.
 
 ## Contributing
 
