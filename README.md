@@ -37,7 +37,7 @@ This package is published to [GitHub Packages](https://github.com/noirly-dev/rea
 
 ### 2. Configure npm for GitHub Packages
 
-Create or update `.npmrc` in your app root:
+Copy [`.npmrc.example`](./.npmrc.example) to `.npmrc` in your app root (not needed when developing this library repo itself):
 
 ```ini
 @noirly-dev:registry=https://npm.pkg.github.com

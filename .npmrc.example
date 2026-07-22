@@ -1,0 +1,5 @@
+# Copy this file to your app's root as `.npmrc` when installing from GitHub Packages.
+# Do NOT commit a `.npmrc` that contains a raw token.
+
+@noirly-dev:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
