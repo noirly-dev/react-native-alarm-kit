@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
+import com.noirly.alarmkit.AlarmEngine
 import com.noirly.alarmkit.AlarmKitFacade
 import com.noirly.alarmkit.AlarmKitScope
 import com.noirly.alarmkit.repository.AlarmRecord
@@ -25,6 +26,31 @@ class AlarmRingingService : Service() {
     val alarmId = intent?.getStringExtra(EXTRA_ALARM_ID) ?: run {
       stopSelf()
       return START_NOT_STICKY
+    }
+
+    when (intent.action) {
+      ACTION_DISMISS -> {
+        AlarmKitFacade.initialize(this)
+        AlarmKitScope.scope.launch {
+          try {
+            AlarmEngine(this@AlarmRingingService).dismissAlarm(alarmId)
+          } catch (_: Exception) {
+            stopSelf()
+          }
+        }
+        return START_NOT_STICKY
+      }
+      ACTION_SNOOZE -> {
+        AlarmKitFacade.initialize(this)
+        AlarmKitScope.scope.launch {
+          try {
+            AlarmEngine(this@AlarmRingingService).snoozeAlarm(alarmId, null)
+          } catch (_: Exception) {
+            stopSelf()
+          }
+        }
+        return START_NOT_STICKY
+      }
     }
 
     AlarmKitScope.scope.launch {
@@ -59,6 +85,7 @@ class AlarmRingingService : Service() {
 
   private fun buildNotification(record: AlarmRecord): Notification {
     createChannel()
+    val launchIntent = createLaunchPendingIntent(record.id)
     val dismissIntent = PendingIntent.getService(
       this,
       record.id.hashCode(),
@@ -85,10 +112,31 @@ class AlarmRingingService : Service() {
       .setPriority(NotificationCompat.PRIORITY_MAX)
       .setCategory(NotificationCompat.CATEGORY_ALARM)
       .setOngoing(true)
+      .setContentIntent(launchIntent)
+      .setFullScreenIntent(launchIntent, true)
       .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Dismiss", dismissIntent)
       .addAction(android.R.drawable.ic_menu_recent_history, "Snooze", snoozeIntent)
-      .setFullScreenIntent(dismissIntent, true)
       .build()
+  }
+
+  private fun createLaunchPendingIntent(alarmId: String): PendingIntent {
+    val launchIntent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
+      addFlags(
+        Intent.FLAG_ACTIVITY_NEW_TASK or
+          Intent.FLAG_ACTIVITY_SINGLE_TOP or
+          Intent.FLAG_ACTIVITY_CLEAR_TOP,
+      )
+      putExtra(EXTRA_ALARM_ID, alarmId)
+    } ?: Intent().apply {
+      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      putExtra(EXTRA_ALARM_ID, alarmId)
+    }
+    return PendingIntent.getActivity(
+      this,
+      alarmId.hashCode() + 2,
+      launchIntent,
+      pendingIntentFlags(),
+    )
   }
 
   private fun createChannel() {
@@ -97,7 +145,11 @@ class AlarmRingingService : Service() {
         CHANNEL_ID,
         "Alarm Ringing",
         NotificationManager.IMPORTANCE_HIGH,
-      )
+      ).apply {
+        description = "Full-screen alarm alerts"
+        setBypassDnd(true)
+        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+      }
       val manager = getSystemService(NotificationManager::class.java)
       manager.createNotificationChannel(channel)
     }
